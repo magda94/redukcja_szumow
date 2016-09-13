@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MenuController">
    <children>
       <SplitPane dividerPositions="0.29797979797979796" prefHeight="700.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -20,17 +20,17 @@
                         <Font name="Calibri Bold" size="19.0" />
                      </font>
                   </Text>
-                  <ChoiceBox layoutX="14.0" layoutY="42.0" prefWidth="150.0" />
+                  <ChoiceBox fx:id="chooseMethod" layoutX="14.0" layoutY="42.0" prefWidth="150.0" />
                   <Text layoutX="14.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rozmiar macierzy">
                      <font>
                         <Font name="Calibri" size="15.0" />
                      </font>
                   </Text>
-                  <CheckBox disable="true" layoutX="14.0" layoutY="106.0" mnemonicParsing="false" text="3x3" />
-                  <CheckBox disable="true" layoutX="123.0" layoutY="106.0" mnemonicParsing="false" text="5x5" />
-                  <CheckBox disable="true" layoutX="220.0" layoutY="106.0" mnemonicParsing="false" text="7x7" />
+                  <CheckBox fx:id="matrix3x3" layoutX="14.0" layoutY="106.0" mnemonicParsing="false" text="3x3" />
+                  <CheckBox fx:id="matrix5x5" layoutX="123.0" layoutY="106.0" mnemonicParsing="false" text="5x5" />
+                  <CheckBox fx:id="matrix7x7" layoutX="220.0" layoutY="106.0" mnemonicParsing="false" text="7x7" />
                   <Button layoutX="181.0" layoutY="642.0" mnemonicParsing="false" text="Filtruj obraz" />
-                  <Button layoutX="22.0" layoutY="642.0" mnemonicParsing="false" text="Wczytaj obraz" />
+                  <Button fx:id="loadImage" layoutX="22.0" layoutY="642.0" mnemonicParsing="false" onAction="#loadImageFromFile" text="Wczytaj obraz" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -50,11 +50,7 @@
                            <children>
                               <HBox alignment="CENTER" layoutX="-33.0" prefHeight="665.0" prefWidth="696.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <ImageView fitHeight="669.0" fitWidth="695.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../../../../../Downloads/zdjęcia/421972_400774616685244_1031679435_n.jpg" />
-                                       </image>
-                                    </ImageView>
+                                    <ImageView fx:id="image" fitHeight="669.0" fitWidth="695.0" pickOnBounds="true" preserveRatio="true" />
                                  </children>
                               </HBox>
                            </children>
