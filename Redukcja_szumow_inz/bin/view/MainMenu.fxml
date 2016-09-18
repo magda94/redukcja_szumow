@@ -29,8 +29,10 @@
                   <CheckBox fx:id="matrix3x3" layoutX="14.0" layoutY="106.0" mnemonicParsing="false" text="3x3" />
                   <CheckBox fx:id="matrix5x5" layoutX="123.0" layoutY="106.0" mnemonicParsing="false" text="5x5" />
                   <CheckBox fx:id="matrix7x7" layoutX="220.0" layoutY="106.0" mnemonicParsing="false" text="7x7" />
-                  <Button layoutX="181.0" layoutY="642.0" mnemonicParsing="false" text="Filtruj obraz" />
-                  <Button fx:id="loadImage" layoutX="22.0" layoutY="642.0" mnemonicParsing="false" onAction="#loadImageFromFile" text="Wczytaj obraz" />
+                  <Button fx:id="filtrImage" disable="true" layoutX="176.0" layoutY="617.0" mnemonicParsing="false" onAction="#showFilterImage" prefWidth="100.0" text="Filtruj obraz" />
+                  <Button fx:id="loadImage" layoutX="26.0" layoutY="617.0" mnemonicParsing="false" onAction="#loadImageFromFile" prefWidth="100.0" text="Wczytaj obraz" />
+                  <Button fx:id="saveImage" disable="true" layoutX="26.0" layoutY="650.0" mnemonicParsing="false" onAction="#saveImageasFile" prefWidth="100.0" text="Zapisz obraz" />
+                  <Button fx:id="resetImage" disable="true" layoutX="176.0" layoutY="650.0" mnemonicParsing="false" prefWidth="100.0" text="Resetuj obraz" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -50,7 +52,7 @@
                            <children>
                               <HBox alignment="CENTER" layoutX="-33.0" prefHeight="665.0" prefWidth="696.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <ImageView fx:id="image" fitHeight="669.0" fitWidth="695.0" pickOnBounds="true" preserveRatio="true" />
+                                    <ImageView fx:id="imageView" fitHeight="669.0" fitWidth="695.0" pickOnBounds="true" preserveRatio="true" />
                                  </children>
                               </HBox>
                            </children>
