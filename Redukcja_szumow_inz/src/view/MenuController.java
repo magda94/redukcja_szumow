@@ -5,16 +5,17 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 
+import org.opencv.core.Mat;
+
+import address.GaussianFilter;
 import address.MainApp;
+import address.MedianFilter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -23,9 +24,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class MenuController {
 	
@@ -57,6 +55,10 @@ public class MenuController {
 	
 	private MainApp mainApp;
 	private ObservableList<String> list=FXCollections.observableArrayList(listMethod);
+	
+	private Mat imageMatrix;
+	
+	private String path;
 
 	/*
 	 * Set settings in main menu.
@@ -122,9 +124,10 @@ public class MenuController {
 		File selectedFile=fileChooser.showOpenDialog(null);
 		if(selectedFile!=null){
 			try{
-				@SuppressWarnings("deprecation")
-				Image tempImage=new Image(selectedFile.toURL().toString());
-				imageView.setImage(tempImage);
+				//@SuppressWarnings("deprecation")
+				this.path=selectedFile.getAbsolutePath();
+				this.image=new Image(selectedFile.toURL().toString());
+				imageView.setImage(image);
 				filtrImage.setDisable(false);
 				saveImage.setDisable(true);
 				
@@ -143,6 +146,34 @@ public class MenuController {
 			if(matrix3x3.isSelected() || matrix5x5.isSelected() || matrix7x7.isSelected()){
 				saveImage.setDisable(false);
 				resetImage.setDisable(false);
+				//medianFilter
+				if(chooseMethod.getSelectionModel().getSelectedIndex()==0){
+					int size=0;
+					size=getSize();
+					MedianFilter medianFilter;
+					if(imageMatrix==null)
+						medianFilter=new MedianFilter(path,size);
+					else
+						medianFilter=new MedianFilter(imageMatrix,size);
+					medianFilter.filtrImage();
+					Image fImage=medianFilter.returnFiltredImage();
+					imageMatrix=medianFilter.returnMatrix();
+					imageView.setImage(fImage);
+				}
+				//GaussianFilter
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==1){
+					int size=0;
+					size=getSize();
+					GaussianFilter gaussianFilter;
+					if(imageMatrix==null)
+						gaussianFilter=new GaussianFilter(path,size);
+					else
+						gaussianFilter=new GaussianFilter(imageMatrix,size);
+					gaussianFilter.filtrImage();
+					Image fImage=gaussianFilter.returnFiltredImage();
+					imageMatrix=gaussianFilter.returnMatrix();
+					imageView.setImage(fImage);
+				}
 			}else{
 				Alert alert=new Alert(AlertType.ERROR);
 				alert.setTitle("B³¹d");
@@ -153,17 +184,28 @@ public class MenuController {
 		}
 	}
 	
+	private int getSize(){
+		int size=0;
+		if(matrix3x3.isSelected())
+			size=3;
+		else if(matrix5x5.isSelected())
+			size=5;
+		else if(matrix7x7.isSelected())
+			size=7;
+		return size;
+	}
+	
 	@FXML
 	private void saveImageasFile(){
 		FileChooser fileChooser=new FileChooser();
 		
-		FileChooser.ExtensionFilter filter=new FileChooser.ExtensionFilter("Image files (*.jpg, *.png)", "*.jpg","*.png");
-		fileChooser.getExtensionFilters().add(filter);
+		fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JPG(*.jpg )" , "*.jpg"),
+												new FileChooser.ExtensionFilter("PNG (*.png)", "*.png" ));
 		
 		File file=fileChooser.showSaveDialog(null);
-		image=imageView.getImage();
+		Image tempImage=imageView.getImage();
 		if(file!=null){
-			BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
+			BufferedImage bImage = SwingFXUtils.fromFXImage(tempImage, null);
 		    try {
 		      ImageIO.write(bImage, "png", file);
 		    } catch (Exception e) {

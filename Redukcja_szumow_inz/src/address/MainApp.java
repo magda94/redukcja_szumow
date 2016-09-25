@@ -3,6 +3,8 @@ package address;
 
 import java.io.IOException;
 
+import org.opencv.core.Core;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -68,6 +70,7 @@ public class MainApp extends Application{
 	}
 	
 	public static void main(String[]args){
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		launch(args);
 	}
 }
