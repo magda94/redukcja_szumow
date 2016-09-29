@@ -21,6 +21,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -28,7 +30,7 @@ import javafx.stage.FileChooser;
 public class MenuController {
 	
 	@FXML
-	private ChoiceBox chooseMethod;
+	private ChoiceBox<String> chooseMethod;
 	
 	@FXML
 	private CheckBox matrix3x3;
@@ -47,7 +49,18 @@ public class MenuController {
 	@FXML
 	private ImageView imageView;
 	
+	@FXML
+	private Slider standardDeviationX;
+	@FXML
+	private Slider standardDeviationY;
+	
+	@FXML
+	private Label deviationXLabel;
+	@FXML
+	private Label deviationYLabel;
+	
 	private Image image;
+	private Image originalImage;
 	
 	private FileChooser fileChooser;
 	
@@ -65,6 +78,8 @@ public class MenuController {
 	 */
 	@FXML
 	private void initialize(){
+		deviationXLabel.setText("0");
+		deviationYLabel.setText("0");
 		chooseMethod.setValue(listMethod[0]);
 		chooseMethod.setItems(list);
 		chooseMethod.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -93,6 +108,23 @@ public class MenuController {
 		            matrix3x3.setSelected(false);
 		        	matrix5x5.setSelected(false);
 		}};
+		
+		ChangeListener standardDeviationXChanger=new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+				deviationXLabel.setText(String.format("%.2f", new_val));
+			}
+		};
+		
+		ChangeListener standardDeviationYChanger=new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+				deviationYLabel.setText(String.format("%.2f", new_val));
+			}
+		};
+		
+		standardDeviationX.valueProperty().addListener(standardDeviationXChanger);
+		standardDeviationY.valueProperty().addListener(standardDeviationYChanger);
 		matrix3x3.selectedProperty().addListener(changeSize3x3);
 		matrix5x5.selectedProperty().addListener(changeSize5x5);
 		matrix7x7.selectedProperty().addListener(changeSize7x7);
@@ -103,14 +135,50 @@ public class MenuController {
 	 */
 	private void choose(String value){
 		if (value==listMethod[0] || value==listMethod[1]){
-			matrix3x3.setDisable(false);
-			matrix5x5.setDisable(false);
-			matrix7x7.setDisable(false);
+			setEnableMatrix();
+			if(value==listMethod[1]){
+				setEnableDeviation();
+			}else{
+				setDisableDeviation();
+			}
 		}else{
-			matrix3x3.setDisable(true);
-			matrix5x5.setDisable(true);
-			matrix7x7.setDisable(true);
+			setDisableMatrix();
+			setDisableDeviation();
 		}
+	}
+	
+	/*
+	 * Set disable sliders for standard deviation.
+	 */
+	private void setDisableDeviation(){
+		standardDeviationX.setDisable(true);
+		standardDeviationY.setDisable(true);
+	}
+	
+	/*
+	 * Set enable sliders for standard deviation.
+	 */
+	private void setEnableDeviation(){
+		standardDeviationX.setDisable(false);
+		standardDeviationY.setDisable(false);
+	}
+	
+	/*
+	 * Set disable checkboxs for matrix's size.
+	 */
+	private void setDisableMatrix() {
+		matrix3x3.setDisable(true);
+		matrix5x5.setDisable(true);
+		matrix7x7.setDisable(true);
+	}
+	
+	/*
+	 * Set enable checkboxs for matrix's size.
+	 */
+	private void setEnableMatrix(){
+		matrix3x3.setDisable(false);
+		matrix5x5.setDisable(false);
+		matrix7x7.setDisable(false);
 	}
 	
 	/*
@@ -127,6 +195,7 @@ public class MenuController {
 				//@SuppressWarnings("deprecation")
 				this.path=selectedFile.getAbsolutePath();
 				this.image=new Image(selectedFile.toURL().toString());
+				this.originalImage=image;
 				imageView.setImage(image);
 				filtrImage.setDisable(false);
 				saveImage.setDisable(true);
@@ -164,11 +233,13 @@ public class MenuController {
 				else if(chooseMethod.getSelectionModel().getSelectedIndex()==1){
 					int size=0;
 					size=getSize();
+					double devX=getDeviationX();
+					double devY=getDeviationY();
 					GaussianFilter gaussianFilter;
 					if(imageMatrix==null)
-						gaussianFilter=new GaussianFilter(path,size);
+						gaussianFilter=new GaussianFilter(path,size,devX,devY);
 					else
-						gaussianFilter=new GaussianFilter(imageMatrix,size);
+						gaussianFilter=new GaussianFilter(imageMatrix,size,devX,devY);
 					gaussianFilter.filtrImage();
 					Image fImage=gaussianFilter.returnFiltredImage();
 					imageMatrix=gaussianFilter.returnMatrix();
@@ -184,6 +255,23 @@ public class MenuController {
 		}
 	}
 	
+	/*
+	 * Return standard deviation in X direction from slider.
+	 */
+	private double getDeviationX(){
+		return standardDeviationX.getValue();
+	}
+	
+	/*
+	 * Return standard deviation in Y direction from slider.
+	 */
+	private double getDeviationY(){
+		return standardDeviationY.getValue();
+	}
+	
+	/*
+	 * Return matrix's size which choose user.
+	 */
 	private int getSize(){
 		int size=0;
 		if(matrix3x3.isSelected())
@@ -195,6 +283,9 @@ public class MenuController {
 		return size;
 	}
 	
+	/*
+	 * Save image in jpg or png format.
+	 */
 	@FXML
 	private void saveImageasFile(){
 		FileChooser fileChooser=new FileChooser();
@@ -212,6 +303,12 @@ public class MenuController {
 		      e.printStackTrace();
 		    }
 		}
+	}
+	
+	@FXML
+	private void getOriginalImage(){
+		imageView.setImage(originalImage);
+		imageMatrix=null;
 	}
 	/**
      * Is called by the main application to give a reference back to itself.
