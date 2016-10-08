@@ -9,7 +9,7 @@ public class GaussianFilter extends Filter{
 	private double sigmaX;
 	private double sigmaY;
 	
-	public GaussianFilter(String path, int size ,double devX, double devY){
+	public GaussianFilter(String path, int size ,double devX, double devY) throws Exception{
 		super(path,size);
 		sigmaX=devX;
 		sigmaY=devY;

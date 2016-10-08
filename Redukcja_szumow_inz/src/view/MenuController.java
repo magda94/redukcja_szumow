@@ -7,9 +7,13 @@ import javax.imageio.ImageIO;
 
 import org.opencv.core.Mat;
 
+import address.BilateralFilter;
+import address.CannyFilter;
 import address.GaussianFilter;
+import address.LaplacianFilter;
 import address.MainApp;
 import address.MedianFilter;
+import address.SobelFilter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -38,6 +42,18 @@ public class MenuController {
 	private CheckBox matrix5x5;
 	@FXML
 	private CheckBox matrix7x7;
+	@FXML
+	private CheckBox derivativeX0;
+	@FXML
+	private CheckBox derivativeX1;
+	@FXML
+	private CheckBox derivativeX2;
+	@FXML
+	private CheckBox derivativeY0;
+	@FXML
+	private CheckBox derivativeY1;
+	@FXML
+	private CheckBox derivativeY2;
 	
 	@FXML
 	private Button filtrImage;
@@ -53,18 +69,34 @@ public class MenuController {
 	private Slider standardDeviationX;
 	@FXML
 	private Slider standardDeviationY;
+	@FXML
+	private Slider scaleSlider;
+	@FXML
+	private Slider deltaSlider;
+	@FXML
+	private Slider lowerThreshold;
+	@FXML
+	private Slider upperThreshold;
 	
 	@FXML
 	private Label deviationXLabel;
 	@FXML
 	private Label deviationYLabel;
+	@FXML
+	private Label scaleLabel;
+	@FXML
+	private Label deltaLabel;
+	@FXML
+	private Label lowerThLabel;
+	@FXML
+	private Label upperThLabel;
 	
 	private Image image;
 	private Image originalImage;
 	
 	private FileChooser fileChooser;
 	
-	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Inne"};
+	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Laplasjan","Filtr Sobela","Filtr Canny'ego","Bilateral","Inne"};
 	
 	private MainApp mainApp;
 	private ObservableList<String> list=FXCollections.observableArrayList(listMethod);
@@ -80,6 +112,10 @@ public class MenuController {
 	private void initialize(){
 		deviationXLabel.setText("0");
 		deviationYLabel.setText("0");
+		scaleLabel.setText("0");
+		deltaLabel.setText("0");
+		lowerThLabel.setText("0");
+		upperThLabel.setText("0");
 		chooseMethod.setValue(listMethod[0]);
 		chooseMethod.setItems(list);
 		chooseMethod.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -123,28 +159,191 @@ public class MenuController {
 			}
 		};
 		
+		ChangeListener scaleChanger=new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val){
+				scaleLabel.setText(String.format("%.2f", new_val));
+			}
+		};
+		
+		ChangeListener deltaChanger=new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val){
+				deltaLabel.setText(String.format("%.2f", new_val));
+			}
+		};
+		
+		ChangeListener derX0Changer = new ChangeListener<Boolean>() {
+		    @Override
+		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
+		        if (new_val)
+		            derivativeX1.setSelected(false);
+		        	derivativeX2.setSelected(false);
+		}};
+		
+		ChangeListener derX1Changer = new ChangeListener<Boolean>() {
+		    @Override
+		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
+		        if (new_val)
+		            derivativeX0.setSelected(false);
+		        	derivativeX2.setSelected(false);
+		}};
+		
+		ChangeListener derX2Changer = new ChangeListener<Boolean>() {
+		    @Override
+		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
+		        if (new_val)
+		            derivativeX0.setSelected(false);
+		        	derivativeX1.setSelected(false);
+		}};
+		
+		ChangeListener derY0Changer = new ChangeListener<Boolean>() {
+		    @Override
+		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
+		        if (new_val)
+		            derivativeY1.setSelected(false);
+		        	derivativeY2.setSelected(false);
+		}};
+		
+		ChangeListener derY1Changer = new ChangeListener<Boolean>() {
+		    @Override
+		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
+		        if (new_val)
+		            derivativeY0.setSelected(false);
+		        	derivativeY2.setSelected(false);
+		}};
+		
+		ChangeListener derY2Changer = new ChangeListener<Boolean>() {
+		    @Override
+		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
+		        if (new_val)
+		            derivativeY0.setSelected(false);
+		        	derivativeY1.setSelected(false);
+		}};
+		
+		ChangeListener lowerChanger=new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val){
+				lowerThLabel.setText(String.format("%.2f", new_val));
+			}
+		};
+		
+		ChangeListener upperChanger=new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val){
+				upperThLabel.setText(String.format("%.2f", new_val));
+			}
+		};
+		
 		standardDeviationX.valueProperty().addListener(standardDeviationXChanger);
 		standardDeviationY.valueProperty().addListener(standardDeviationYChanger);
+		scaleSlider.valueProperty().addListener(scaleChanger);
+		deltaSlider.valueProperty().addListener(deltaChanger);
 		matrix3x3.selectedProperty().addListener(changeSize3x3);
 		matrix5x5.selectedProperty().addListener(changeSize5x5);
 		matrix7x7.selectedProperty().addListener(changeSize7x7);
+		derivativeX0.selectedProperty().addListener(derX0Changer);
+		derivativeX1.selectedProperty().addListener(derX1Changer);
+		derivativeX2.selectedProperty().addListener(derX2Changer);
+		derivativeY0.selectedProperty().addListener(derY0Changer);
+		derivativeY1.selectedProperty().addListener(derY1Changer);
+		derivativeY2.selectedProperty().addListener(derY2Changer);
+		lowerThreshold.valueProperty().addListener(lowerChanger);
+		upperThreshold.valueProperty().addListener(upperChanger);
 	}
 	
 	/*
 	 * Choose method to filtr image.
 	 */
 	private void choose(String value){
-		if (value==listMethod[0] || value==listMethod[1]){
+		if (value==listMethod[0] || value==listMethod[1] || value==listMethod[2] || value==listMethod[3] || value==listMethod[4] || value==listMethod[5]){
 			setEnableMatrix();
-			if(value==listMethod[1]){
+			if(value==listMethod[1] || value==listMethod[5]){
 				setEnableDeviation();
-			}else{
+				setDisableScaleAndDelta();
+				setDisableDerivative();
+				setDisableThresholds();
+			}
+			if(value==listMethod[2]){
+				setEnableScaleAndDelta();
 				setDisableDeviation();
+				setDisableDerivative();
+				setDisableThresholds();
+			}
+			if(value==listMethod[3]){
+				setEnableScaleAndDelta();
+				setEnableDerivative();
+				setDisableDeviation();
+				setDisableThresholds();
+			}
+			if(value==listMethod[4]){
+				setEnableThresholds();
 			}
 		}else{
 			setDisableMatrix();
 			setDisableDeviation();
+			setDisableScaleAndDelta();
+			setDisableDerivative();
+			setDisableThresholds();
 		}
+	}
+	
+	/*
+	 * Set disable sliders for thresholds.
+	 */
+	private void setDisableThresholds(){
+		lowerThreshold.setDisable(true);
+		upperThreshold.setDisable(true);
+	}
+	
+	/*
+	 * Set enable sliders for thresholds.
+	 */
+	private void setEnableThresholds(){
+		lowerThreshold.setDisable(false);
+		upperThreshold.setDisable(false);
+	}
+	
+	/*
+	 * Set disable checkboxes for derivative X and Y.
+	 */
+	private void setDisableDerivative(){
+		derivativeX0.setDisable(true);
+		derivativeX1.setDisable(true);
+		derivativeX2.setDisable(true);
+		
+		derivativeY0.setDisable(true);
+		derivativeY1.setDisable(true);
+		derivativeY2.setDisable(true);
+	}
+	
+	/*
+	 * Set enable checkboxes for derivative for X and Y.
+	 */
+	private void setEnableDerivative(){
+		derivativeX0.setDisable(false);
+		derivativeX1.setDisable(false);
+		derivativeX2.setDisable(false);
+		
+		derivativeY0.setDisable(false);
+		derivativeY1.setDisable(false);
+		derivativeY2.setDisable(false);
+	}
+	
+	/*
+	 * Set disable sliders for scale and delta.
+	 */
+	private void setDisableScaleAndDelta(){
+		scaleSlider.setDisable(true);
+		deltaSlider.setDisable(true);
+	}
+	
+	/*
+	 * Set enable sliders for scale and delta.
+	 */
+	private void setEnableScaleAndDelta(){
+		scaleSlider.setDisable(false);
+		deltaSlider.setDisable(false);
 	}
 	
 	/*
@@ -164,7 +363,7 @@ public class MenuController {
 	}
 	
 	/*
-	 * Set disable checkboxs for matrix's size.
+	 * Set disable checkboxes for matrix's size.
 	 */
 	private void setDisableMatrix() {
 		matrix3x3.setDisable(true);
@@ -173,7 +372,7 @@ public class MenuController {
 	}
 	
 	/*
-	 * Set enable checkboxs for matrix's size.
+	 * Set enable checkboxes for matrix's size.
 	 */
 	private void setEnableMatrix(){
 		matrix3x3.setDisable(false);
@@ -196,6 +395,7 @@ public class MenuController {
 				this.path=selectedFile.getAbsolutePath();
 				this.image=new Image(selectedFile.toURL().toString());
 				this.originalImage=image;
+				this.imageMatrix=null;
 				imageView.setImage(image);
 				filtrImage.setDisable(false);
 				saveImage.setDisable(true);
@@ -217,42 +417,235 @@ public class MenuController {
 				resetImage.setDisable(false);
 				//medianFilter
 				if(chooseMethod.getSelectionModel().getSelectedIndex()==0){
-					int size=0;
-					size=getSize();
-					MedianFilter medianFilter;
+					int size=getSize();
+					MedianFilter medianFilter = null;
 					if(imageMatrix==null)
-						medianFilter=new MedianFilter(path,size);
+						try {
+							medianFilter=new MedianFilter(path,size);
+						} catch (Exception e) {
+							showLoadAlert();
+						}
 					else
 						medianFilter=new MedianFilter(imageMatrix,size);
-					medianFilter.filtrImage();
-					Image fImage=medianFilter.returnFiltredImage();
-					imageMatrix=medianFilter.returnMatrix();
-					imageView.setImage(fImage);
+					if(imageMatrix!=null){
+						medianFilter.filtrImage();
+						Image fImage=medianFilter.returnFiltredImage();
+						imageMatrix=medianFilter.returnMatrix();
+						imageView.setImage(fImage);
+					}
 				}
 				//GaussianFilter
 				else if(chooseMethod.getSelectionModel().getSelectedIndex()==1){
-					int size=0;
-					size=getSize();
+					int size=getSize();
 					double devX=getDeviationX();
 					double devY=getDeviationY();
-					GaussianFilter gaussianFilter;
+					GaussianFilter gaussianFilter = null;
 					if(imageMatrix==null)
-						gaussianFilter=new GaussianFilter(path,size,devX,devY);
+						try {
+							gaussianFilter=new GaussianFilter(path,size,devX,devY);
+						} catch (Exception e) {
+							showLoadAlert();
+						}
 					else
 						gaussianFilter=new GaussianFilter(imageMatrix,size,devX,devY);
-					gaussianFilter.filtrImage();
-					Image fImage=gaussianFilter.returnFiltredImage();
-					imageMatrix=gaussianFilter.returnMatrix();
-					imageView.setImage(fImage);
+					if(imageMatrix!=null){
+						gaussianFilter.filtrImage();
+						Image fImage=gaussianFilter.returnFiltredImage();
+						imageMatrix=gaussianFilter.returnMatrix();
+						imageView.setImage(fImage);
+					}
+				}
+				//Laplacian filter
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==2){
+					int size=getSize();
+					double scale=getScale();
+					double delta=getDelta();
+					LaplacianFilter laplacianFilter = null;
+					if(imageMatrix==null)
+						try {
+							laplacianFilter=new LaplacianFilter(path,size,scale,delta);
+						} catch (Exception e) {
+							showLoadAlert();
+						}
+					else
+						laplacianFilter=new LaplacianFilter(imageMatrix,size,scale,delta);
+					if(imageMatrix!=null){
+						laplacianFilter.filtrImage();
+						Image fImage=laplacianFilter.returnFiltredImage();
+						imageMatrix=laplacianFilter.returnMatrix();
+						imageView.setImage(fImage);
+					}
+				}
+				//Sobel filter
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==3){
+					if(checkIfDerivativeSelected()){	
+						int size=getSize();
+						double scale=getScale();
+						double delta=getDelta();
+						int dx=getDerivativeX();
+						int dy=getDerivativeY();
+						SobelFilter sobelFilter = null;
+						if(imageMatrix==null)
+							try {
+								sobelFilter=new SobelFilter(path,size,dx,dy,scale,delta);
+							} catch (Exception e) {
+								showLoadAlert();
+							}
+						else
+							sobelFilter=new SobelFilter(imageMatrix,size,dx,dy,scale,delta);
+						if(imageMatrix!=null){
+							sobelFilter.filtrImage();
+							Image fImage=sobelFilter.returnFiltredImage();
+							imageMatrix=sobelFilter.returnMatrix();
+							imageView.setImage(fImage);
+						}
+					}else{
+						showDerivativeAlert();
+					}
+				}
+				//CannyFilter
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==4){
+					int size=getSize();
+					double lower=getLowerThreshold();
+					double upper=getUpperThreshold();
+					CannyFilter cannyFilter = null;
+					if(imageMatrix==null)
+						try {
+							cannyFilter=new CannyFilter(path,size,lower,upper);
+						} catch (Exception e) {
+							showLoadAlert();
+						}
+					else
+						cannyFilter=new CannyFilter(imageMatrix,size,lower,upper);
+					if(imageMatrix!=null){
+						cannyFilter.filtrImage();
+						Image fImage=cannyFilter.returnFiltredImage();
+						imageMatrix=cannyFilter.returnMatrix();
+						imageView.setImage(fImage);
+					}
+				}
+				//BilateralFilter
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==5){
+					int size=getSize();
+					double devColor=getDeviationX();
+					double devSpace=getDeviationY();
+					BilateralFilter bilateralFilter = null;
+					if(imageMatrix==null)
+						try {
+							bilateralFilter=new BilateralFilter(path,size,devColor,devSpace);
+						} catch (Exception e) {
+							showLoadAlert();
+							e.printStackTrace();
+						}
+					else
+						bilateralFilter=new BilateralFilter(imageMatrix,size,devColor,devSpace);
+					if(imageMatrix!=null){
+						bilateralFilter.filtrImage();
+						Image fImage=bilateralFilter.returnFiltredImage();
+						imageMatrix=bilateralFilter.returnMatrix();
+						imageView.setImage(fImage);
+					}
 				}
 			}else{
-				Alert alert=new Alert(AlertType.ERROR);
-				alert.setTitle("B³¹d");
-				alert.setHeaderText("Nie zaznaczono rozmiaru macierzy!");
-				alert.setContentText("Aby dokonaæ filtracji obrazu tym filtrem nale¿y wybraæ rozmiar macierzy.");
-				alert.showAndWait();
+				showMatrixAlert();
 			}
 		}
+	}
+	
+	/*
+	 * Check if derivative X and Y are selected correctly.
+	 */
+	private boolean checkIfDerivativeSelected(){
+		if(!derivativeX0.isSelected() && !derivativeX1.isSelected() && !derivativeX2.isSelected())
+			return false;
+		if(!derivativeY0.isSelected() && !derivativeY1.isSelected() && !derivativeY2.isSelected())
+			return false;
+		if(derivativeX0.isSelected() && derivativeY0.isSelected())
+			return false;
+		return true;
+	}
+	
+	/*
+	 * Shows alert that image does not load.
+	 */
+	private void showLoadAlert(){
+		Alert alert=new Alert(AlertType.ERROR);
+		alert.setTitle("B³¹d");
+		alert.setHeaderText("B³¹d za³adowania obrazu!");
+		alert.setContentText("Aby przefiltrowaæ obraz musi mieæ on min. 3 kana³y.");
+		alert.showAndWait();
+	}
+	
+	/*
+	 * Shows alert that derivatives X and Y are unchecked.
+	 */
+	private void showDerivativeAlert(){
+		Alert alert=new Alert(AlertType.ERROR);
+		alert.setTitle("B³¹d");
+		alert.setHeaderText("Nie zaznaczono poprawnie rzêdu pochodnej dla X lub Y!");
+		alert.setContentText("Aby dokonaæ filtracji obrazu tym filtrem nale¿y wybraæ rz¹d pochodnej tak by suma rzêdów by³a wiêksza od 0.");
+		alert.showAndWait();
+	}
+	
+	/*
+	 * Shows alert that matrix's size is unchecked.
+	 */
+	private void showMatrixAlert(){
+		Alert alert=new Alert(AlertType.ERROR);
+		alert.setTitle("B³¹d");
+		alert.setHeaderText("Nie zaznaczono rozmiaru macierzy!");
+		alert.setContentText("Aby dokonaæ filtracji obrazu tym filtrem nale¿y wybraæ rozmiar macierzy.");
+		alert.showAndWait();
+	}
+	
+	/*
+	 * Return lower threshold from slider.
+	 */
+	private double getLowerThreshold(){
+		return lowerThreshold.getValue();
+	}
+	
+	/*
+	 * Return upper threshold from slider.
+	 */
+	private double getUpperThreshold(){
+		return upperThreshold.getValue();
+	}
+	
+	/*
+	 * Return derivative X from checkboxes.
+	 */
+	private int getDerivativeX(){
+		if(derivativeX0.isSelected())
+			return 0;
+		if(derivativeX1.isSelected())
+			return 1;
+		return 2;
+	}
+	
+	/*
+	 * Return derivative Y from checkboxes.
+	 */
+	private int getDerivativeY(){
+		if(derivativeY0.isSelected())
+			return 0;
+		if(derivativeY1.isSelected())
+			return 1;
+		return 2;
+	}
+	
+	/*
+	 * Return scale from slider.
+	 */
+	private double getScale(){
+		return scaleSlider.getValue();
+	}
+	
+	/*
+	 * Return delta from slider.
+	 */
+	private double getDelta(){
+		return deltaSlider.getValue();
 	}
 	
 	/*

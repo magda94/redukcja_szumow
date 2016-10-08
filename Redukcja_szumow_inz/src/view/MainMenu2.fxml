@@ -26,9 +26,9 @@
                         <Font name="Calibri" size="15.0" />
                      </font>
                   </Text>
-                  <CheckBox fx:id="matrix3x3" disable="true" layoutX="14.0" layoutY="106.0" mnemonicParsing="false" text="3x3" />
-                  <CheckBox fx:id="matrix5x5" disable="true" layoutX="123.0" layoutY="106.0" mnemonicParsing="false" text="5x5" />
-                  <CheckBox fx:id="matrix7x7" disable="true" layoutX="220.0" layoutY="106.0" mnemonicParsing="false" text="7x7" />
+                  <CheckBox fx:id="matrix3x3" layoutX="14.0" layoutY="106.0" mnemonicParsing="false" text="3x3" />
+                  <CheckBox fx:id="matrix5x5" layoutX="123.0" layoutY="106.0" mnemonicParsing="false" text="5x5" />
+                  <CheckBox fx:id="matrix7x7" layoutX="220.0" layoutY="106.0" mnemonicParsing="false" text="7x7" />
                   <Button fx:id="filtrImage" disable="true" layoutX="176.0" layoutY="617.0" mnemonicParsing="false" onAction="#showFilterImage" prefWidth="100.0" text="Filtruj obraz" />
                   <Button fx:id="loadImage" layoutX="26.0" layoutY="617.0" mnemonicParsing="false" onAction="#loadImageFromFile" prefWidth="100.0" text="Wczytaj obraz" />
                   <Button fx:id="saveImage" disable="true" layoutX="26.0" layoutY="650.0" mnemonicParsing="false" onAction="#saveImageasFile" prefWidth="100.0" text="Zapisz obraz" />
@@ -47,6 +47,48 @@
                   </Text>
                   <Label fx:id="deviationXLabel" layoutX="120.0" layoutY="169.0" text="Label" />
                   <Label fx:id="deviationYLabel" layoutX="254.0" layoutY="169.0" text="Label" />
+                  <Slider fx:id="scaleSlider" disable="true" layoutX="14.0" layoutY="214.0" max="3.0" min="-3.0" prefHeight="15.0" prefWidth="100.0" />
+                  <Slider fx:id="deltaSlider" disable="true" layoutX="154.0" layoutY="214.0" max="1.0" min="-1.0" prefHeight="15.0" prefWidth="100.0" />
+                  <Text layoutX="15.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Skala">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="155.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delta">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Label fx:id="scaleLabel" layoutX="120.0" layoutY="213.0" text="Label" />
+                  <Label fx:id="deltaLabel" layoutX="254.0" layoutY="213.0" text="Label" />
+                  <Text layoutX="16.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pochodna X">
+                     <font>
+                        <Font size="10.0" />
+                     </font></Text>
+                  <Text layoutX="156.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pochodna Y">
+                     <font>
+                        <Font size="10.0" />
+                     </font></Text>
+                  <CheckBox fx:id="derivativeX0" disable="true" layoutX="14.0" layoutY="247.0" mnemonicParsing="false" text="0" />
+                  <CheckBox fx:id="derivativeX1" disable="true" layoutX="62.0" layoutY="247.0" mnemonicParsing="false" text="1" />
+                  <CheckBox fx:id="derivativeX2" disable="true" layoutX="100.0" layoutY="247.0" mnemonicParsing="false" text="2" />
+                  <CheckBox fx:id="derivativeY0" disable="true" layoutX="162.0" layoutY="247.0" mnemonicParsing="false" text="0" />
+                  <CheckBox fx:id="derivativeY1" disable="true" layoutX="205.0" layoutY="247.0" mnemonicParsing="false" text="1" />
+                  <CheckBox fx:id="derivativeY2" disable="true" layoutX="240.0" layoutY="247.0" mnemonicParsing="false" text="2" />
+                  <Text layoutX="13.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dolny próg">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="155.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Górny próg">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Slider fx:id="lowerThreshold" disable="true" layoutX="14.0" layoutY="288.0" max="255.0" prefHeight="14.0" prefWidth="100.0" />
+                  <Slider fx:id="upperThreshold" disable="true" layoutX="156.0" layoutY="288.0" max="255.0" prefHeight="14.0" prefWidth="100.0" />
+                  <Label fx:id="lowerThLabel" layoutX="120.0" layoutY="287.0" text="Label" />
+                  <Label fx:id="upperThLabel" layoutX="254.0" layoutY="287.0" text="Label" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">

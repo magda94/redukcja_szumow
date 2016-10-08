@@ -5,7 +5,7 @@ import org.opencv.imgproc.Imgproc;
 
 public class MedianFilter extends Filter{
 	
-	public MedianFilter(String path,int size){
+	public MedianFilter(String path,int size) throws Exception{
 		super(path,size);
 	}
 	
