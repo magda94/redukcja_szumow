@@ -21,6 +21,8 @@ public class BilateralFilter extends Filter{
 	}
 	
 	public void filtrImage(){
-		Imgproc.bilateralFilter(imageMatrix, imageMatrix, size, sigmaColor, sigmaSpace);
+		Mat tempMatrix=new Mat(imageMatrix.rows(),imageMatrix.cols(),imageMatrix.type());
+		Imgproc.bilateralFilter(imageMatrix, tempMatrix, size, sigmaColor, sigmaSpace);
+		imageMatrix=tempMatrix;
 	}
 }

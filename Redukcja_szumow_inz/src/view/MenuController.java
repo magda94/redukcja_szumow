@@ -9,10 +9,12 @@ import org.opencv.core.Mat;
 
 import address.BilateralFilter;
 import address.CannyFilter;
+import address.Filter;
 import address.GaussianFilter;
 import address.LaplacianFilter;
 import address.MainApp;
 import address.MedianFilter;
+import address.PrewittFilter;
 import address.SobelFilter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -54,6 +56,10 @@ public class MenuController {
 	private CheckBox derivativeY1;
 	@FXML
 	private CheckBox derivativeY2;
+	@FXML
+	private CheckBox verticalEdge;
+	@FXML
+	private CheckBox horizontalEdge;
 	
 	@FXML
 	private Button filtrImage;
@@ -77,6 +83,10 @@ public class MenuController {
 	private Slider lowerThreshold;
 	@FXML
 	private Slider upperThreshold;
+	@FXML
+	private Slider sigmaColor;
+	@FXML
+	private Slider sigmaSpace;
 	
 	@FXML
 	private Label deviationXLabel;
@@ -90,13 +100,17 @@ public class MenuController {
 	private Label lowerThLabel;
 	@FXML
 	private Label upperThLabel;
+	@FXML
+	private Label sigmaColorLabel;
+	@FXML
+	private Label sigmaSpaceLabel;
 	
 	private Image image;
 	private Image originalImage;
 	
 	private FileChooser fileChooser;
 	
-	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Laplasjan","Filtr Sobela","Filtr Canny'ego","Bilateral","Inne"};
+	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Laplasjan","Filtr Sobela","Filtr Canny'ego","Bilateral","Filtr Prewitta","Inne"};
 	
 	private MainApp mainApp;
 	private ObservableList<String> list=FXCollections.observableArrayList(listMethod);
@@ -116,6 +130,8 @@ public class MenuController {
 		deltaLabel.setText("0");
 		lowerThLabel.setText("0");
 		upperThLabel.setText("0");
+		sigmaColorLabel.setText("0");
+		sigmaSpaceLabel.setText("0");
 		chooseMethod.setValue(listMethod[0]);
 		chooseMethod.setItems(list);
 		chooseMethod.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -235,6 +251,22 @@ public class MenuController {
 			}
 		};
 		
+		ChangeListener colorChanger=new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val){
+				sigmaColorLabel.setText(String.format("%.2f", new_val));
+			}
+		};
+		
+		ChangeListener spaceChanger=new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val){
+				sigmaSpaceLabel.setText(String.format("%.2f", new_val));
+			}
+		};
+		
+		
+		
 		standardDeviationX.valueProperty().addListener(standardDeviationXChanger);
 		standardDeviationY.valueProperty().addListener(standardDeviationYChanger);
 		scaleSlider.valueProperty().addListener(scaleChanger);
@@ -250,34 +282,52 @@ public class MenuController {
 		derivativeY2.selectedProperty().addListener(derY2Changer);
 		lowerThreshold.valueProperty().addListener(lowerChanger);
 		upperThreshold.valueProperty().addListener(upperChanger);
+		sigmaColor.valueProperty().addListener(colorChanger);
+		sigmaSpace.valueProperty().addListener(spaceChanger);
 	}
 	
 	/*
 	 * Choose method to filtr image.
 	 */
 	private void choose(String value){
-		if (value==listMethod[0] || value==listMethod[1] || value==listMethod[2] || value==listMethod[3] || value==listMethod[4] || value==listMethod[5]){
+		if (value==listMethod[0] || value==listMethod[1] || value==listMethod[2] || value==listMethod[3] 
+				|| value==listMethod[4] || value==listMethod[5] || value==listMethod[6]){
 			setEnableMatrix();
-			if(value==listMethod[1] || value==listMethod[5]){
+			if(value==listMethod[1]){
 				setEnableDeviation();
 				setDisableScaleAndDelta();
 				setDisableDerivative();
 				setDisableThresholds();
+				setDisableSigmas();
+				setDisableEdges();
 			}
 			if(value==listMethod[2]){
 				setEnableScaleAndDelta();
 				setDisableDeviation();
 				setDisableDerivative();
 				setDisableThresholds();
+				setDisableSigmas();
+				setDisableEdges();
 			}
 			if(value==listMethod[3]){
 				setEnableScaleAndDelta();
 				setEnableDerivative();
 				setDisableDeviation();
 				setDisableThresholds();
+				setDisableSigmas();
+				setDisableEdges();
 			}
 			if(value==listMethod[4]){
 				setEnableThresholds();
+				setDisableSigmas();
+				setDisableEdges();
+			}
+			if(value==listMethod[5]){
+				setEnableSigmas();
+				setDisableEdges();
+			}
+			if(value==listMethod[6]){
+				setEnableEdges();
 			}
 		}else{
 			setDisableMatrix();
@@ -285,7 +335,41 @@ public class MenuController {
 			setDisableScaleAndDelta();
 			setDisableDerivative();
 			setDisableThresholds();
+			setDisableSigmas();
+			setDisableEdges();
 		}
+	}
+	
+	/*
+	 * Set disable checkboxes for vertical and horizontal edges.
+	 */
+	private void setDisableEdges(){
+		verticalEdge.setDisable(true);
+		horizontalEdge.setDisable(true);
+	}
+	
+	/*
+	 * Set enable checkboxes for vertical and horizontal edges.
+	 */
+	private void setEnableEdges(){
+		verticalEdge.setDisable(false);
+		horizontalEdge.setDisable(false);
+	}
+	
+	/*
+	 * Set disable sliders for color and space sigma.
+	 */
+	private void setDisableSigmas(){
+		sigmaColor.setDisable(true);
+		sigmaSpace.setDisable(true);
+	}
+	
+	/*
+	 * Set enable sliders for color and space sigma.
+	 */
+	private void setEnableSigmas(){
+		sigmaColor.setDisable(false);
+		sigmaSpace.setDisable(false);
 	}
 	
 	/*
@@ -419,19 +503,16 @@ public class MenuController {
 				if(chooseMethod.getSelectionModel().getSelectedIndex()==0){
 					int size=getSize();
 					MedianFilter medianFilter = null;
-					if(imageMatrix==null)
+					if(imageMatrix==null){
 						try {
 							medianFilter=new MedianFilter(path,size);
 						} catch (Exception e) {
 							showLoadAlert();
 						}
-					else
+					}else
 						medianFilter=new MedianFilter(imageMatrix,size);
-					if(imageMatrix!=null){
-						medianFilter.filtrImage();
-						Image fImage=medianFilter.returnFiltredImage();
-						imageMatrix=medianFilter.returnMatrix();
-						imageView.setImage(fImage);
+					if(medianFilter!=null){
+						filtrImage(medianFilter);
 					}
 				}
 				//GaussianFilter
@@ -440,19 +521,16 @@ public class MenuController {
 					double devX=getDeviationX();
 					double devY=getDeviationY();
 					GaussianFilter gaussianFilter = null;
-					if(imageMatrix==null)
+					if(imageMatrix==null){
 						try {
 							gaussianFilter=new GaussianFilter(path,size,devX,devY);
 						} catch (Exception e) {
 							showLoadAlert();
 						}
-					else
+					}else
 						gaussianFilter=new GaussianFilter(imageMatrix,size,devX,devY);
-					if(imageMatrix!=null){
-						gaussianFilter.filtrImage();
-						Image fImage=gaussianFilter.returnFiltredImage();
-						imageMatrix=gaussianFilter.returnMatrix();
-						imageView.setImage(fImage);
+					if(gaussianFilter!=null){
+						filtrImage(gaussianFilter);
 					}
 				}
 				//Laplacian filter
@@ -469,11 +547,8 @@ public class MenuController {
 						}
 					else
 						laplacianFilter=new LaplacianFilter(imageMatrix,size,scale,delta);
-					if(imageMatrix!=null){
-						laplacianFilter.filtrImage();
-						Image fImage=laplacianFilter.returnFiltredImage();
-						imageMatrix=laplacianFilter.returnMatrix();
-						imageView.setImage(fImage);
+					if(laplacianFilter!=null){
+						filtrImage(laplacianFilter);
 					}
 				}
 				//Sobel filter
@@ -485,19 +560,16 @@ public class MenuController {
 						int dx=getDerivativeX();
 						int dy=getDerivativeY();
 						SobelFilter sobelFilter = null;
-						if(imageMatrix==null)
+						if(imageMatrix==null){
 							try {
 								sobelFilter=new SobelFilter(path,size,dx,dy,scale,delta);
 							} catch (Exception e) {
 								showLoadAlert();
 							}
-						else
+						}else
 							sobelFilter=new SobelFilter(imageMatrix,size,dx,dy,scale,delta);
-						if(imageMatrix!=null){
-							sobelFilter.filtrImage();
-							Image fImage=sobelFilter.returnFiltredImage();
-							imageMatrix=sobelFilter.returnMatrix();
-							imageView.setImage(fImage);
+						if(sobelFilter!=null){
+							filtrImage(sobelFilter);
 						}
 					}else{
 						showDerivativeAlert();
@@ -509,47 +581,74 @@ public class MenuController {
 					double lower=getLowerThreshold();
 					double upper=getUpperThreshold();
 					CannyFilter cannyFilter = null;
-					if(imageMatrix==null)
+					if(imageMatrix==null){
 						try {
 							cannyFilter=new CannyFilter(path,size,lower,upper);
 						} catch (Exception e) {
 							showLoadAlert();
 						}
-					else
+					}else
 						cannyFilter=new CannyFilter(imageMatrix,size,lower,upper);
-					if(imageMatrix!=null){
-						cannyFilter.filtrImage();
-						Image fImage=cannyFilter.returnFiltredImage();
-						imageMatrix=cannyFilter.returnMatrix();
-						imageView.setImage(fImage);
+					if(cannyFilter!=null){
+						filtrImage(cannyFilter);
 					}
 				}
 				//BilateralFilter
 				else if(chooseMethod.getSelectionModel().getSelectedIndex()==5){
 					int size=getSize();
-					double devColor=getDeviationX();
-					double devSpace=getDeviationY();
+					double devColor=getSigmaColor();
+					double devSpace=getSigmaSpace();
 					BilateralFilter bilateralFilter = null;
-					if(imageMatrix==null)
+					if(imageMatrix==null){
 						try {
 							bilateralFilter=new BilateralFilter(path,size,devColor,devSpace);
 						} catch (Exception e) {
 							showLoadAlert();
 							e.printStackTrace();
 						}
-					else
+					}else
 						bilateralFilter=new BilateralFilter(imageMatrix,size,devColor,devSpace);
-					if(imageMatrix!=null){
-						bilateralFilter.filtrImage();
-						Image fImage=bilateralFilter.returnFiltredImage();
-						imageMatrix=bilateralFilter.returnMatrix();
-						imageView.setImage(fImage);
+					if(bilateralFilter!=null){
+						filtrImage(bilateralFilter);
+					}
+				}
+				//PrewittFilter
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==6){
+					if(getVerticalFlag() || getHorizontalFlag()){
+						int size=getSize();
+						boolean verFlag=getVerticalFlag();
+						boolean horFlag=getHorizontalFlag();
+						PrewittFilter prewittFilter=null;
+						if(imageMatrix==null){
+							try{
+								prewittFilter=new PrewittFilter(path,size,verFlag,horFlag);
+							}catch(Exception e){
+								showLoadAlert();
+								e.printStackTrace();
+							}
+						}else
+							prewittFilter=new PrewittFilter(imageMatrix,size,verFlag,horFlag);
+						if(prewittFilter!=null){
+							filtrImage(prewittFilter);
+						}
+					}else{
+						showEdgesAlert();
 					}
 				}
 			}else{
 				showMatrixAlert();
 			}
 		}
+	}
+	
+	/*
+	 * Load correct filter
+	 */
+	private void filtrImage(Filter filter){
+		filter.filtrImage();
+		Image fImage=filter.returnFiltredImage();
+		imageMatrix=filter.returnMatrix();
+		imageView.setImage(fImage);
 	}
 	
 	/*
@@ -596,6 +695,45 @@ public class MenuController {
 		alert.setHeaderText("Nie zaznaczono rozmiaru macierzy!");
 		alert.setContentText("Aby dokonaæ filtracji obrazu tym filtrem nale¿y wybraæ rozmiar macierzy.");
 		alert.showAndWait();
+	}
+	
+	/*
+	 * Show alert that both edges are unchecked.
+	 */
+	private void showEdgesAlert(){
+		Alert alert=new Alert(AlertType.ERROR);
+		alert.setTitle("B³¹d");
+		alert.setHeaderText("Nie zaznaczono rodzaju wykrywanych krawêdzi!");
+		alert.setContentText("Aby dokonaæ filtracji obrazu tym filtrem nale¿y wybraæ przynajmniej jeden rodzaj krawêdzi, które maj¹ byæ wykryte.");
+		alert.showAndWait();
+	}
+	
+	/*
+	 * Return true if vertical edge is checked.
+	 */
+	private boolean getVerticalFlag(){
+		return verticalEdge.isSelected();
+	}
+	
+	/*
+	 * Return true if horizontal edge is checked.
+	 */
+	private boolean getHorizontalFlag(){
+		return horizontalEdge.isSelected();
+	}
+	
+	/*
+	 * Return sigmaColor from slider.
+	 */
+	private double getSigmaColor(){
+		return sigmaColor.getValue();
+	}
+	
+	/*
+	 * Return sigmaSpace from slider.
+	 */
+	private double getSigmaSpace(){
+		return sigmaSpace.getValue();
 	}
 	
 	/*

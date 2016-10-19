@@ -29,11 +29,15 @@ public class SobelFilter extends Filter{
 	}
 	
 	public void filtrImage(){
+		Mat grayImage=new Mat(imageMatrix.rows(),imageMatrix.cols(),CvType.CV_8U);
+		Imgproc.cvtColor(imageMatrix, grayImage,Imgproc.COLOR_BGR2GRAY);
 		if(imageMatrix.depth()==CvType.CV_8U)
 			depth=-1/CvType.CV_16S;
 		if(imageMatrix.depth()==(CvType.CV_16U/CvType.CV_16S))
 			depth=-1/CvType.CV_32F;
 		//dx,dy pochdna w kierunku x,y (na moje szukanie krawêdzi pionowych i poziomych)
-		Imgproc.Sobel(imageMatrix, imageMatrix, depth, dx,dy, size, scale, delta);
+		//Imgproc.Sobel(imageMatrix, imageMatrix, depth, dx,dy, size, scale, delta);
+		Imgproc.Sobel(grayImage, grayImage, depth, dx,dy, size, scale, delta);
+		imageMatrix=grayImage;
 	}
 }

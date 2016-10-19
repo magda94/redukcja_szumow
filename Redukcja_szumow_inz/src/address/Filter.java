@@ -19,9 +19,6 @@ public abstract class Filter {
 	public Filter(String path,int size) throws Exception{
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 			imageMatrix=Highgui.imread(path);
-			//System.out.println("TYPE: "+imageMatrix.type());
-			//if(imageMatrix.channels()<2)
-				//throw new Exception();
 			Imgproc.cvtColor(imageMatrix, imageMatrix, Imgproc.COLOR_RGBA2BGR);
 		this.size=size;
 	}
