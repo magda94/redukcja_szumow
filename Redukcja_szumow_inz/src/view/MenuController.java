@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 
 import org.opencv.core.Mat;
 
+import address.AdaptiveMedianFilter;
 import address.BilateralFilter;
 import address.CannyFilter;
 import address.Filter;
@@ -14,7 +15,6 @@ import address.GaussianFilter;
 import address.LaplacianFilter;
 import address.MainApp;
 import address.MedianFilter;
-import address.PrewittFilter;
 import address.SobelFilter;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -57,9 +57,7 @@ public class MenuController {
 	@FXML
 	private CheckBox derivativeY2;
 	@FXML
-	private CheckBox verticalEdge;
-	@FXML
-	private CheckBox horizontalEdge;
+	private CheckBox adaptiveFilter;
 	
 	@FXML
 	private Button filtrImage;
@@ -110,7 +108,7 @@ public class MenuController {
 	
 	private FileChooser fileChooser;
 	
-	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Laplasjan","Filtr Sobela","Filtr Canny'ego","Bilateral","Filtr Prewitta","Inne"};
+	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Laplasjan","Filtr Sobela","Filtr Canny'ego","Bilateral","Filtr adaptacyjny","Inne"};
 	
 	private MainApp mainApp;
 	private ObservableList<String> list=FXCollections.observableArrayList(listMethod);
@@ -266,7 +264,6 @@ public class MenuController {
 		};
 		
 		
-		
 		standardDeviationX.valueProperty().addListener(standardDeviationXChanger);
 		standardDeviationY.valueProperty().addListener(standardDeviationYChanger);
 		scaleSlider.valueProperty().addListener(scaleChanger);
@@ -293,41 +290,49 @@ public class MenuController {
 		if (value==listMethod[0] || value==listMethod[1] || value==listMethod[2] || value==listMethod[3] 
 				|| value==listMethod[4] || value==listMethod[5] || value==listMethod[6]){
 			setEnableMatrix();
-			if(value==listMethod[1]){
-				setEnableDeviation();
+			if(value==listMethod[0]){
+				setEnableAdaptive();
+				setDisableDeviation();
 				setDisableScaleAndDelta();
 				setDisableDerivative();
 				setDisableThresholds();
 				setDisableSigmas();
-				setDisableEdges();
+			}
+			if(value==listMethod[1]){
+				setEnableDeviation();
+				setDisableAdaptive();
+				setDisableScaleAndDelta();
+				setDisableDerivative();
+				setDisableThresholds();
+				setDisableSigmas();
 			}
 			if(value==listMethod[2]){
 				setEnableScaleAndDelta();
+				setDisableAdaptive();
 				setDisableDeviation();
 				setDisableDerivative();
 				setDisableThresholds();
 				setDisableSigmas();
-				setDisableEdges();
 			}
 			if(value==listMethod[3]){
 				setEnableScaleAndDelta();
 				setEnableDerivative();
+				setDisableAdaptive();
 				setDisableDeviation();
 				setDisableThresholds();
 				setDisableSigmas();
-				setDisableEdges();
 			}
 			if(value==listMethod[4]){
 				setEnableThresholds();
+				setDisableAdaptive();
 				setDisableSigmas();
-				setDisableEdges();
 			}
 			if(value==listMethod[5]){
 				setEnableSigmas();
-				setDisableEdges();
+				setDisableAdaptive();
 			}
 			if(value==listMethod[6]){
-				setEnableEdges();
+				
 			}
 		}else{
 			setDisableMatrix();
@@ -336,24 +341,22 @@ public class MenuController {
 			setDisableDerivative();
 			setDisableThresholds();
 			setDisableSigmas();
-			setDisableEdges();
+			setDisableAdaptive();
 		}
 	}
 	
 	/*
-	 * Set disable checkboxes for vertical and horizontal edges.
+	 * Set disable checkbox for adaptive filter.
 	 */
-	private void setDisableEdges(){
-		verticalEdge.setDisable(true);
-		horizontalEdge.setDisable(true);
+	private void setDisableAdaptive(){
+		adaptiveFilter.setDisable(true);
 	}
 	
 	/*
-	 * Set enable checkboxes for vertical and horizontal edges.
+	 * Set enable checkbox for adaptive filter.
 	 */
-	private void setEnableEdges(){
-		verticalEdge.setDisable(false);
-		horizontalEdge.setDisable(false);
+	private void setEnableAdaptive(){
+		adaptiveFilter.setDisable(false);
 	}
 	
 	/*
@@ -499,8 +502,8 @@ public class MenuController {
 			if(matrix3x3.isSelected() || matrix5x5.isSelected() || matrix7x7.isSelected()){
 				saveImage.setDisable(false);
 				resetImage.setDisable(false);
-				//medianFilter
-				if(chooseMethod.getSelectionModel().getSelectedIndex()==0){
+				//non adaptive medianFilter 
+				if(chooseMethod.getSelectionModel().getSelectedIndex()==0 && !isAdaptive()){
 					int size=getSize();
 					MedianFilter medianFilter = null;
 					if(imageMatrix==null){
@@ -513,6 +516,22 @@ public class MenuController {
 						medianFilter=new MedianFilter(imageMatrix,size);
 					if(medianFilter!=null){
 						filtrImage(medianFilter);
+					}
+				}
+				//adaptive median filter
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==1 && isAdaptive()){
+					int size=getSize();
+					AdaptiveMedianFilter adaptiveMedianFilter = null;
+					if(imageMatrix==null){
+						try{
+							adaptiveMedianFilter=new AdaptiveMedianFilter(path,size);
+						}catch(Exception e){
+							showLoadAlert();
+						}
+					}else
+						adaptiveMedianFilter=new AdaptiveMedianFilter(imageMatrix,size);
+					if(adaptiveMedianFilter!=null){
+						filtrImage(adaptiveMedianFilter);
 					}
 				}
 				//GaussianFilter
@@ -614,26 +633,7 @@ public class MenuController {
 				}
 				//PrewittFilter
 				else if(chooseMethod.getSelectionModel().getSelectedIndex()==6){
-					if(getVerticalFlag() || getHorizontalFlag()){
-						int size=getSize();
-						boolean verFlag=getVerticalFlag();
-						boolean horFlag=getHorizontalFlag();
-						PrewittFilter prewittFilter=null;
-						if(imageMatrix==null){
-							try{
-								prewittFilter=new PrewittFilter(path,size,verFlag,horFlag);
-							}catch(Exception e){
-								showLoadAlert();
-								e.printStackTrace();
-							}
-						}else
-							prewittFilter=new PrewittFilter(imageMatrix,size,verFlag,horFlag);
-						if(prewittFilter!=null){
-							filtrImage(prewittFilter);
-						}
-					}else{
-						showEdgesAlert();
-					}
+					
 				}
 			}else{
 				showMatrixAlert();
@@ -709,17 +709,10 @@ public class MenuController {
 	}
 	
 	/*
-	 * Return true if vertical edge is checked.
+	 * Return true if filter is adaptive
 	 */
-	private boolean getVerticalFlag(){
-		return verticalEdge.isSelected();
-	}
-	
-	/*
-	 * Return true if horizontal edge is checked.
-	 */
-	private boolean getHorizontalFlag(){
-		return horizontalEdge.isSelected();
+	private boolean isAdaptive(){
+		return adaptiveFilter.isSelected();
 	}
 	
 	/*

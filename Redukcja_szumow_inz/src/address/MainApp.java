@@ -51,7 +51,7 @@ public class MainApp extends Application{
 	public void showMainMenu(){
 		try{
 			FXMLLoader loader=new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("../view/MainMenu2.fxml"));
+			loader.setLocation(MainApp.class.getResource("../view/MainMenu3.fxml"));
 			AnchorPane menu=(AnchorPane)loader.load();
 			
 			rootLayout.setCenter(menu);
