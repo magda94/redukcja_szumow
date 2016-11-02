@@ -11,6 +11,7 @@ import address.AdaptiveMedianFilter;
 import address.BilateralFilter;
 import address.CannyFilter;
 import address.Filter;
+import address.FourierTransform;
 import address.GaussianFilter;
 import address.LaplacianFilter;
 import address.MainApp;
@@ -108,7 +109,7 @@ public class MenuController {
 	
 	private FileChooser fileChooser;
 	
-	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Laplasjan","Filtr Sobela","Filtr Canny'ego","Bilateral","Filtr adaptacyjny","Inne"};
+	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Laplasjan","Filtr Sobela","Filtr Canny'ego","Bilateral","Transformata Fouriera","Inne"};
 	
 	private MainApp mainApp;
 	private ObservableList<String> list=FXCollections.observableArrayList(listMethod);
@@ -332,7 +333,13 @@ public class MenuController {
 				setDisableAdaptive();
 			}
 			if(value==listMethod[6]){
-				
+				setDisableMatrix();
+				setDisableDeviation();
+				setDisableScaleAndDelta();
+				setDisableDerivative();
+				setDisableThresholds();
+				setDisableSigmas();
+				setDisableAdaptive();
 			}
 		}else{
 			setDisableMatrix();
@@ -519,8 +526,9 @@ public class MenuController {
 					}
 				}
 				//adaptive median filter
-				else if(chooseMethod.getSelectionModel().getSelectedIndex()==1 && isAdaptive()){
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==0 && isAdaptive()){
 					int size=getSize();
+					System.out.println("JESTEM");
 					AdaptiveMedianFilter adaptiveMedianFilter = null;
 					if(imageMatrix==null){
 						try{
@@ -532,6 +540,7 @@ public class MenuController {
 						adaptiveMedianFilter=new AdaptiveMedianFilter(imageMatrix,size);
 					if(adaptiveMedianFilter!=null){
 						filtrImage(adaptiveMedianFilter);
+						System.out.println("SKONCZY£EM!");
 					}
 				}
 				//GaussianFilter
@@ -631,12 +640,24 @@ public class MenuController {
 						filtrImage(bilateralFilter);
 					}
 				}
-				//PrewittFilter
-				else if(chooseMethod.getSelectionModel().getSelectedIndex()==6){
-					
-				}
 			}else{
 				showMatrixAlert();
+			}
+		}
+		//Fourier Transform
+		else if(chooseMethod.getSelectionModel().getSelectedIndex()==6){
+			FourierTransform fourierTransform = null;
+			if(imageMatrix==null){
+				try{
+					fourierTransform=new FourierTransform(path,0);
+				}catch (Exception e){
+					showLoadAlert();
+					e.printStackTrace();
+				}
+			}else
+				fourierTransform=new FourierTransform(imageMatrix,0);
+			if(fourierTransform!=null){
+				filtrImage(fourierTransform);
 			}
 		}
 	}

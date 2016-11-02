@@ -18,8 +18,8 @@ public abstract class Filter {
 	
 	public Filter(String path,int size) throws Exception{
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-			imageMatrix=Highgui.imread(path);
-			Imgproc.cvtColor(imageMatrix, imageMatrix, Imgproc.COLOR_RGBA2BGR);
+		imageMatrix=Highgui.imread(path);
+		Imgproc.cvtColor(imageMatrix, imageMatrix, Imgproc.COLOR_RGBA2BGR);
 		this.size=size;
 	}
 	
