@@ -47,4 +47,5 @@ public abstract class Filter {
 		Image image = SwingFXUtils.toFXImage(bImage, null);
 		return image;
 	}
+	
 }

@@ -40,8 +40,8 @@ public class AdaptiveMedianFilter extends Filter{
 						for(int m=-1-addToSize;m<2+addToSize;m++){
 							for(int n=-1-addToSize;n<2+addToSize;n++){
 								if(i+m<0 || j+n<0 || i+m>imageMatrix.rows()-1 || j+n>imageMatrix.cols()-1){
-									tempMedianArray[nrElement] = 0;
-									nrElement++;
+									//tempMedianArray[nrElement] = 255;
+									//nrElement++;
 									continue;
 								}
 								tempMedianArray[nrElement] = imageMatrix.get(i+m,j+n)[k];
@@ -49,10 +49,11 @@ public class AdaptiveMedianFilter extends Filter{
 							}
 						}
 						Arrays.sort(tempMedianArray);
-						medianPixel[k]=tempMedianArray[(int)tempMedianArray.length/2];
+						medianPixel[k]=tempMedianArray[(int)(nrElement-1)/2];
 						minValue = tempMedianArray[0];
 						Arrays.toString(tempMedianArray);
-						maxValue = tempMedianArray[tempMedianArray.length-1];
+						maxValue = tempMedianArray[nrElement-1];
+						//maxValue = tempMedianArray[tempMedianArray.length-1];
 						
 						//check conditions from LEVEL A
 					}while(medianPixel[k]-minValue<=0 && medianPixel[k]-maxValue>=0);
