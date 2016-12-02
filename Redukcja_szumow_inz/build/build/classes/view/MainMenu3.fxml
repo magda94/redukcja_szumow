@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MenuController">
+   <children>
+      <SplitPane dividerPositions="0.29797979797979796" prefHeight="700.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <Text layoutX="120.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Menu" AnchorPane.topAnchor="10.0">
+                     <font>
+                        <Font name="Calibri Bold" size="19.0" />
+                     </font>
+                  </Text>
+                  <ChoiceBox fx:id="chooseMethod" layoutX="14.0" layoutY="42.0" prefWidth="150.0" />
+                  <Text layoutX="14.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rozmiar macierzy">
+                     <font>
+                        <Font name="Calibri" size="15.0" />
+                     </font>
+                  </Text>
+                  <CheckBox fx:id="matrix3x3" layoutX="14.0" layoutY="106.0" mnemonicParsing="false" text="3x3" />
+                  <CheckBox fx:id="matrix5x5" layoutX="123.0" layoutY="106.0" mnemonicParsing="false" text="5x5" />
+                  <CheckBox fx:id="matrix7x7" layoutX="220.0" layoutY="106.0" mnemonicParsing="false" text="7x7" />
+                  <Button fx:id="filtrImage" disable="true" layoutX="176.0" layoutY="617.0" mnemonicParsing="false" onAction="#showFilterImage" prefWidth="100.0" text="Filtruj obraz" />
+                  <Button fx:id="loadImage" layoutX="26.0" layoutY="617.0" mnemonicParsing="false" onAction="#loadImageFromFile" prefWidth="100.0" text="Wczytaj obraz" />
+                  <Button fx:id="saveImage" disable="true" layoutX="26.0" layoutY="650.0" mnemonicParsing="false" onAction="#saveImageasFile" prefWidth="100.0" text="Zapisz obraz" />
+                  <Button fx:id="resetImage" disable="true" layoutX="176.0" layoutY="650.0" mnemonicParsing="false" onAction="#getOriginalImage" prefWidth="100.0" text="Resetuj obraz" />
+                  <Slider fx:id="standardDeviationX" blockIncrement="1.0" disable="true" layoutX="14.0" layoutY="159.0" majorTickUnit="2.0" max="10.0" minorTickCount="1" prefHeight="38.0" prefWidth="100.0" />
+                  <Slider fx:id="standardDeviationY" blockIncrement="1.0" disable="true" layoutX="154.0" layoutY="159.0" majorTickUnit="2.0" max="10.0" minorTickCount="1" prefHeight="38.0" prefWidth="100.0" snapToTicks="true" />
+                  <Text layoutX="14.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Odchylenie standadowe w kierunku X" wrappingWidth="107.57080078125">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="157.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Odchylenie standardowe w kierunku Y" wrappingWidth="126.57080078125">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Label fx:id="deviationXLabel" layoutX="120.0" layoutY="169.0" text="Label" />
+                  <Label fx:id="deviationYLabel" layoutX="254.0" layoutY="169.0" text="Label" />
+                  <Slider fx:id="scaleSlider" disable="true" layoutX="14.0" layoutY="214.0" max="3.0" min="-3.0" prefHeight="15.0" prefWidth="100.0" />
+                  <Slider fx:id="deltaSlider" disable="true" layoutX="154.0" layoutY="214.0" max="1.0" min="-1.0" prefHeight="15.0" prefWidth="100.0" />
+                  <Text layoutX="15.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Skala">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="155.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delta">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Label fx:id="scaleLabel" layoutX="120.0" layoutY="213.0" text="Label" />
+                  <Label fx:id="deltaLabel" layoutX="254.0" layoutY="213.0" text="Label" />
+                  <Text layoutX="16.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pochodna X">
+                     <font>
+                        <Font size="10.0" />
+                     </font></Text>
+                  <Text layoutX="156.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pochodna Y">
+                     <font>
+                        <Font size="10.0" />
+                     </font></Text>
+                  <CheckBox fx:id="derivativeX0" disable="true" layoutX="14.0" layoutY="247.0" mnemonicParsing="false" text="0" />
+                  <CheckBox fx:id="derivativeX1" disable="true" layoutX="62.0" layoutY="247.0" mnemonicParsing="false" text="1" />
+                  <CheckBox fx:id="derivativeX2" disable="true" layoutX="100.0" layoutY="247.0" mnemonicParsing="false" text="2" />
+                  <CheckBox fx:id="derivativeY0" disable="true" layoutX="162.0" layoutY="247.0" mnemonicParsing="false" text="0" />
+                  <CheckBox fx:id="derivativeY1" disable="true" layoutX="205.0" layoutY="247.0" mnemonicParsing="false" text="1" />
+                  <CheckBox fx:id="derivativeY2" disable="true" layoutX="240.0" layoutY="247.0" mnemonicParsing="false" text="2" />
+                  <Text layoutX="13.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dolny próg">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="155.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Górny próg">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Slider fx:id="lowerThreshold" disable="true" layoutX="14.0" layoutY="288.0" max="255.0" prefHeight="14.0" prefWidth="100.0" />
+                  <Slider fx:id="upperThreshold" disable="true" layoutX="156.0" layoutY="288.0" max="255.0" prefHeight="14.0" prefWidth="100.0" />
+                  <Label fx:id="lowerThLabel" layoutX="120.0" layoutY="287.0" text="Label" />
+                  <Label fx:id="upperThLabel" layoutX="254.0" layoutY="287.0" text="Label" />
+                  <Text layoutX="15.0" layoutY="317.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SigmaColor">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="155.0" layoutY="316.0" strokeType="OUTSIDE" strokeWidth="0.0" text="SigmaSpace">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Slider fx:id="sigmaColor" disable="true" layoutX="13.0" layoutY="320.0" max="255.0" prefHeight="14.0" prefWidth="100.0" />
+                  <Slider fx:id="sigmaSpace" disable="true" layoutX="156.0" layoutY="320.0" max="255.0" prefHeight="14.0" prefWidth="100.0" />
+                  <Label fx:id="sigmaColorLabel" layoutX="120.0" layoutY="319.0" text="Label" />
+                  <Label fx:id="sigmaSpaceLabel" layoutX="254.0" layoutY="319.0" text="Label" />
+                  <CheckBox fx:id="adaptiveFilter" layoutX="172.0" layoutY="46.0" mnemonicParsing="false" text="Filtr adaptacyjny" />
+                  <Slider fx:id="brightness" disable="true" layoutX="15.0" layoutY="360.0" min="-100.0" prefHeight="14.0" prefWidth="182.0" />
+                  <Text layoutX="15.0" layoutY="347.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Poziom jasności/kontrastu">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Label fx:id="brightnessLabel" layoutX="212.0" layoutY="358.0" text="Label" />
+                  <Slider fx:id="thresholding" disable="true" layoutX="15.0" layoutY="392.0" max="255.0" prefHeight="14.0" prefWidth="182.0" />
+                  <Label fx:id="thresholdingLabel" layoutX="212.0" layoutY="391.0" text="Label" />
+                  <Text layoutX="15.0" layoutY="388.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Próg progowania">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Slider fx:id="constC" disable="true" layoutX="13.0" layoutY="424.0" prefHeight="14.0" prefWidth="182.0" />
+                  <Text layoutX="15.0" layoutY="421.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Stała C (odejmowana od średniej)">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Label fx:id="constCLabel" layoutX="212.0" layoutY="423.0" text="Label" />
+                  <Slider fx:id="blockSize" blockIncrement="2.0" disable="true" layoutX="13.0" layoutY="460.0" max="55.0" minorTickCount="2" prefHeight="14.0" prefWidth="182.0" />
+                  <Text layoutX="15.0" layoutY="453.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rozmiar obszaru">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Text>
+                  <Label fx:id="blockSizeLabel" layoutX="212.0" layoutY="459.0" text="Label" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <SplitPane dividerPositions="0.040229885057471264" layoutX="150.0" layoutY="161.0" orientation="VERTICAL" prefHeight="698.0" prefWidth="698.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <Text fontSmoothingType="LCD" layoutX="300.0" layoutY="17.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wczytany obraz" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="Calibri Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <HBox alignment="CENTER" layoutX="-33.0" prefHeight="665.0" prefWidth="696.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <ImageView fx:id="imageView" fitHeight="669.0" fitWidth="695.0" pickOnBounds="true" preserveRatio="true" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                    </items>
+                  </SplitPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
