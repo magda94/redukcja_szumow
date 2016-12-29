@@ -52,17 +52,9 @@ public class MenuController {
 	@FXML
 	private CheckBox matrix7x7;
 	@FXML
-	private CheckBox derivativeX0;
+	private CheckBox derivativeX;
 	@FXML
-	private CheckBox derivativeX1;
-	@FXML
-	private CheckBox derivativeX2;
-	@FXML
-	private CheckBox derivativeY0;
-	@FXML
-	private CheckBox derivativeY1;
-	@FXML
-	private CheckBox derivativeY2;
+	private CheckBox derivativeY;
 	@FXML
 	private CheckBox adaptiveFilter;
 	
@@ -131,7 +123,7 @@ public class MenuController {
 	
 	private FileChooser fileChooser;
 	
-	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Laplasjan","Filtr Sobela","Filtr Canny'ego","Bilateral","Transformata Fouriera","Jasnoœæ","Kontrast","Progowanie","Progowanie adaptacyjne","Filtr górnoprzepustowy","Inne"};
+	final String[] listMethod={"Filtr medianowy","Filtr Gaussa","Filtr górnoprzepustowy","Laplasjan","Filtr Sobela","Filtr Canny'ego","Filtr bilateralny","Jasnoœæ","Kontrast","Progowanie","Progowanie adaptacyjne"};
 	
 	private MainApp mainApp;
 	private ObservableList<String> list=FXCollections.observableArrayList(listMethod);
@@ -214,54 +206,6 @@ public class MenuController {
 			}
 		};
 		
-		ChangeListener derX0Changer = new ChangeListener<Boolean>() {
-		    @Override
-		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
-		        if (new_val)
-		            derivativeX1.setSelected(false);
-		        	derivativeX2.setSelected(false);
-		}};
-		
-		ChangeListener derX1Changer = new ChangeListener<Boolean>() {
-		    @Override
-		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
-		        if (new_val)
-		            derivativeX0.setSelected(false);
-		        	derivativeX2.setSelected(false);
-		}};
-		
-		ChangeListener derX2Changer = new ChangeListener<Boolean>() {
-		    @Override
-		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
-		        if (new_val)
-		            derivativeX0.setSelected(false);
-		        	derivativeX1.setSelected(false);
-		}};
-		
-		ChangeListener derY0Changer = new ChangeListener<Boolean>() {
-		    @Override
-		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
-		        if (new_val)
-		            derivativeY1.setSelected(false);
-		        	derivativeY2.setSelected(false);
-		}};
-		
-		ChangeListener derY1Changer = new ChangeListener<Boolean>() {
-		    @Override
-		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
-		        if (new_val)
-		            derivativeY0.setSelected(false);
-		        	derivativeY2.setSelected(false);
-		}};
-		
-		ChangeListener derY2Changer = new ChangeListener<Boolean>() {
-		    @Override
-		    public void changed(ObservableValue<? extends Boolean> ov,Boolean old_val, Boolean new_val) {
-		        if (new_val)
-		            derivativeY0.setSelected(false);
-		        	derivativeY1.setSelected(false);
-		}};
-		
 		ChangeListener lowerChanger=new ChangeListener<Number>(){
 			@Override
 			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val){
@@ -325,12 +269,6 @@ public class MenuController {
 		matrix3x3.selectedProperty().addListener(changeSize3x3);
 		matrix5x5.selectedProperty().addListener(changeSize5x5);
 		matrix7x7.selectedProperty().addListener(changeSize7x7);
-		derivativeX0.selectedProperty().addListener(derX0Changer);
-		derivativeX1.selectedProperty().addListener(derX1Changer);
-		derivativeX2.selectedProperty().addListener(derX2Changer);
-		derivativeY0.selectedProperty().addListener(derY0Changer);
-		derivativeY1.selectedProperty().addListener(derY1Changer);
-		derivativeY2.selectedProperty().addListener(derY2Changer);
 		lowerThreshold.valueProperty().addListener(lowerChanger);
 		upperThreshold.valueProperty().addListener(upperChanger);
 		sigmaColor.valueProperty().addListener(colorChanger);
@@ -347,7 +285,7 @@ public class MenuController {
 	private void choose(String value){
 		if (value==listMethod[0] || value==listMethod[1] || value==listMethod[2] || value==listMethod[3] 
 				|| value==listMethod[4] || value==listMethod[5] || value==listMethod[6] || value==listMethod[7]
-				|| value==listMethod[8] || value==listMethod[9] || value==listMethod[10] || value==listMethod[11]){
+				|| value==listMethod[8] || value==listMethod[9] || value==listMethod[10]){
 			setEnableMatrix();
 			//Median Filter
 			if(value==listMethod[0]){
@@ -375,8 +313,21 @@ public class MenuController {
 				setDisableConstC();
 				setDisableBlockSize();
 			}
-			//Laplacian Filter
+			//HighpassFilter
 			if(value==listMethod[2]){
+				setDisableDeviation();
+				setDisableAdaptive();
+				setDisableScaleAndDelta();
+				setDisableDerivative();
+				setDisableThresholds();
+				setDisableSigmas();
+				setDisableBrightness();
+				setDisableThresholding();
+				setDisableConstC();
+				setDisableBlockSize();
+			}
+			//Laplacian Filter
+			if(value==listMethod[3]){
 				setEnableScaleAndDelta();
 				setDisableAdaptive();
 				setDisableDeviation();
@@ -389,7 +340,7 @@ public class MenuController {
 				setDisableBlockSize();
 			}
 			//Sobel Filter
-			if(value==listMethod[3]){
+			if(value==listMethod[4]){
 				setEnableScaleAndDelta();
 				setEnableDerivative();
 				setDisableAdaptive();
@@ -402,37 +353,26 @@ public class MenuController {
 				setDisableBlockSize();
 			}
 			//Canny Filter
-			if(value==listMethod[4]){
+			if(value==listMethod[5]){
 				setEnableThresholds();
 				setDisableAdaptive();
+				setDisableDeviation();
 				setDisableSigmas();
 				setDisableBrightness();
+				setDisableScaleAndDelta();
+				setDisableDerivative();
 				setDisableThresholding();
 				setDisableConstC();
 				setDisableBlockSize();
 			}
 			//Bilateral Filter
-			if(value==listMethod[5]){
+			if(value==listMethod[6]){
 				setEnableSigmas();
 				setEnableAdaptive();
 				setDisableDeviation();
 				setDisableScaleAndDelta();
 				setDisableDerivative();
 				setDisableThresholds();
-				setDisableBrightness();
-				setDisableThresholding();
-				setDisableConstC();
-				setDisableBlockSize();
-			}
-			//Fourier Transform
-			if(value==listMethod[6]){
-				setDisableMatrix();
-				setDisableDeviation();
-				setDisableScaleAndDelta();
-				setDisableDerivative();
-				setDisableThresholds();
-				setDisableSigmas();
-				setDisableAdaptive();
 				setDisableBrightness();
 				setDisableThresholding();
 				setDisableConstC();
@@ -491,21 +431,10 @@ public class MenuController {
 				setDisableScaleAndDelta();
 				setDisableDerivative();
 				setDisableThresholds();
-				setDisableSigmas();
-			}
-			//HighpassFilter
-			if(value==listMethod[11]){
-				setDisableDeviation();
-				setDisableAdaptive();
-				setDisableScaleAndDelta();
-				setDisableDerivative();
-				setDisableThresholds();
-				setDisableSigmas();
-				setDisableBrightness();
 				setDisableThresholding();
-				setDisableConstC();
-				setDisableBlockSize();
+				setDisableSigmas();
 			}
+			
 		//Others
 		}else{
 			setDisableMatrix();
@@ -628,26 +557,16 @@ public class MenuController {
 	 * Set disable checkboxes for derivative X and Y.
 	 */
 	private void setDisableDerivative(){
-		derivativeX0.setDisable(true);
-		derivativeX1.setDisable(true);
-		derivativeX2.setDisable(true);
-		
-		derivativeY0.setDisable(true);
-		derivativeY1.setDisable(true);
-		derivativeY2.setDisable(true);
+		derivativeX.setDisable(true);
+		derivativeY.setDisable(true);
 	}
 	
 	/*
 	 * Set enable checkboxes for derivative for X and Y.
 	 */
 	private void setEnableDerivative(){
-		derivativeX0.setDisable(false);
-		derivativeX1.setDisable(false);
-		derivativeX2.setDisable(false);
-		
-		derivativeY0.setDisable(false);
-		derivativeY1.setDisable(false);
-		derivativeY2.setDisable(false);
+		derivativeX.setDisable(false);
+		derivativeY.setDisable(false);
 	}
 	
 	/*
@@ -706,7 +625,7 @@ public class MenuController {
 	@FXML
 	private void loadImageFromFile(){
 		fileChooser=new FileChooser();
-		FileChooser.ExtensionFilter filter= new FileChooser.ExtensionFilter("Image files (*.jpg, *.png)", "*.jpg","*.png");
+		FileChooser.ExtensionFilter filter= new FileChooser.ExtensionFilter("Image files (*.jpg, *.png, *.bmp)", "*.jpg","*.png","*.bmp");
 		fileChooser.getExtensionFilters().add(filter);
 		File selectedFile=fileChooser.showOpenDialog(null);
 		if(selectedFile!=null){
@@ -786,7 +705,7 @@ public class MenuController {
 					}
 				}
 				//Laplacian filter
-				else if(chooseMethod.getSelectionModel().getSelectedIndex()==2){
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==3){
 					int size=getSize();
 					double scale=getScale();
 					double delta=getDelta();
@@ -804,7 +723,7 @@ public class MenuController {
 					}
 				}
 				//Sobel filter
-				else if(chooseMethod.getSelectionModel().getSelectedIndex()==3){
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==4){
 					if(checkIfDerivativeSelected()){	
 						int size=getSize();
 						double scale=getScale();
@@ -828,7 +747,7 @@ public class MenuController {
 					}
 				}
 				//CannyFilter
-				else if(chooseMethod.getSelectionModel().getSelectedIndex()==4){
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==5){
 					int size=getSize();
 					double lower=getLowerThreshold();
 					double upper=getUpperThreshold();
@@ -846,7 +765,7 @@ public class MenuController {
 					}
 				}
 				//BilateralFilter
-				else if(chooseMethod.getSelectionModel().getSelectedIndex()==5 && !isAdaptive()){
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==6 && !isAdaptive()){
 					int size=getSize();
 					double devColor=getSigmaColor();
 					double devSpace=getSigmaSpace();
@@ -864,7 +783,7 @@ public class MenuController {
 					}
 				}
 				//AdaptiveBilateralFilter
-				else if(chooseMethod.getSelectionModel().getSelectedIndex()==5 && isAdaptive()){
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==6 && isAdaptive()){
 					int size=getSize();
 					double devSpace=getSigmaSpace();
 					AdaptiveBilateralFilter adaptiveBilateralFilter = null;
@@ -881,7 +800,7 @@ public class MenuController {
 					}
 				}
 				//HighPassFilter
-				else if(chooseMethod.getSelectionModel().getSelectedIndex()==11){
+				else if(chooseMethod.getSelectionModel().getSelectedIndex()==2){
 					int size=getSize();
 					HighPassFilter highPassFilter = null;
 					if(imageMatrix==null){
@@ -898,21 +817,6 @@ public class MenuController {
 				}
 			}else{
 				showMatrixAlert();
-			}
-		}
-		//Fourier Transform
-		else if(chooseMethod.getSelectionModel().getSelectedIndex()==6){
-			FourierTransform fourierTransform = null;
-			if(imageMatrix==null){
-				try{
-					fourierTransform=new FourierTransform(path,0);
-				}catch (Exception e){
-					showLoadAlert();
-				}
-			}else
-				fourierTransform=new FourierTransform(imageMatrix,0);
-			if(fourierTransform!=null){
-				filtrImage(fourierTransform);
 			}
 		}
 		//Brightness change
@@ -1005,11 +909,7 @@ public class MenuController {
 	 * Check if derivative X and Y are selected correctly.
 	 */
 	private boolean checkIfDerivativeSelected(){
-		if(!derivativeX0.isSelected() && !derivativeX1.isSelected() && !derivativeX2.isSelected())
-			return false;
-		if(!derivativeY0.isSelected() && !derivativeY1.isSelected() && !derivativeY2.isSelected())
-			return false;
-		if(derivativeX0.isSelected() && derivativeY0.isSelected())
+		if(!derivativeX.isSelected() && !derivativeY.isSelected())
 			return false;
 		return true;
 	}
@@ -1042,8 +942,8 @@ public class MenuController {
 	private void showDerivativeAlert(){
 		Alert alert=new Alert(AlertType.ERROR);
 		alert.setTitle("B³¹d");
-		alert.setHeaderText("Nie zaznaczono poprawnie rzêdu pochodnej dla X lub Y!");
-		alert.setContentText("Aby dokonaæ filtracji obrazu tym filtrem nale¿y wybraæ rz¹d pochodnej tak by suma rzêdów by³a wiêksza od 0.");
+		alert.setHeaderText("Nie zaznaczono poprawnie kierunku wykrywania krawêdzi!");
+		alert.setContentText("Aby dokonaæ filtracji obrazu tym filtrem nale¿y wybraæ przynajmniej jeden kierunek wykrycia krawêdzi.");
 		alert.showAndWait();
 	}
 	
@@ -1136,22 +1036,18 @@ public class MenuController {
 	 * Return derivative X from checkboxes.
 	 */
 	private int getDerivativeX(){
-		if(derivativeX0.isSelected())
+		if(!derivativeX.isSelected())
 			return 0;
-		if(derivativeX1.isSelected())
-			return 1;
-		return 2;
+		return 1;
 	}
 	
 	/*
 	 * Return derivative Y from checkboxes.
 	 */
 	private int getDerivativeY(){
-		if(derivativeY0.isSelected())
+		if(!derivativeY.isSelected())
 			return 0;
-		if(derivativeY1.isSelected())
-			return 1;
-		return 2;
+		return 1;
 	}
 	
 	/*
@@ -1204,7 +1100,8 @@ public class MenuController {
 		FileChooser fileChooser=new FileChooser();
 		
 		fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JPG(*.jpg )" , "*.jpg"),
-												new FileChooser.ExtensionFilter("PNG (*.png)", "*.png" ));
+												new FileChooser.ExtensionFilter("PNG (*.png)", "*.png" ),
+												new FileChooser.ExtensionFilter("BMP(*.bmp)", "*.bmp"));
 		
 		File file=fileChooser.showSaveDialog(null);
 		Image tempImage=imageView.getImage();
